@@ -2,7 +2,7 @@ package audiocontent
 
 import (
 	"fmt"
-	"io"
+	"os"
 
 	"github.com/groob/plist"
 )
@@ -38,13 +38,18 @@ func (ac *AudioContent) GetDownloadUrl(PackageID string) string {
 	return fmt.Sprintf("%s%s%s", acBaseUrl, acFilePath, ac.Packages[PackageID].DownloadName)
 }
 
-func NewAudioContent(PlistPath io.Reader) (AudioContent, error) {
+func NewAudioContent(filepath string) (AudioContent, error) {
+	file, err := os.Open(filepath)
 
-	d := plist.NewDecoder(PlistPath)
+	if err != nil {
+		return AudioContent{}, err
+	}
+
+	d := plist.NewDecoder(file)
 
 	var ac AudioContent
 
-	err := d.Decode(&ac)
+	err = d.Decode(&ac)
 
 	if err != nil {
 		return AudioContent{}, err
@@ -61,6 +66,26 @@ func (ac *AudioContent) ListMandatory() {
 			fmt.Printf("\t%d. %s\n", count, k)
 			count++
 		}
+	}
+}
+
+func (ac *AudioContent) ListOptional() {
+	fmt.Println("Optional Audio Content:")
+	count := 1
+	for k, v := range ac.Packages {
+		if v.IsMandatory == false {
+			fmt.Printf("\t%d. %s\n", count, k)
+			count++
+		}
+	}
+}
+
+func (ac *AudioContent) ListAll() {
+	fmt.Println("All available audio content:")
+	count := 1
+	for k, _ := range ac.Packages {
+		fmt.Printf("\t%d. %s\n", count, k)
+		count++
 	}
 }
 
