@@ -45,33 +45,39 @@ func ResolvePath(path string) (string, error) {
 }
 
 func HandleCommands(c Commands) {
-
 	switch {
 	case c.Get != nil:
-		fp, _ := ResolvePath(c.Get.Plist)
-		ac, _ := audiocontent.NewAudioContent(fp)
-
-		urls := ac.GetMandatory()
-
-		for _, url := range urls {
-			client.DownloadFile(url)
-		}
+		GetCommand(c.Get)
 
 	case c.List != nil:
-		fp, _ := ResolvePath(c.List.Plist)
-		ac, _ := audiocontent.NewAudioContent(fp)
+		ListCommand(c.List)
+	}
+}
 
-		if c.List.Mandatory {
-			ac.ListMandatory()
-		}
+func GetCommand(get *Choices) {
+	fp, _ := ResolvePath(get.Plist)
+	ac, _ := audiocontent.NewAudioContent(fp)
 
-		if c.List.Optional {
-			ac.ListOptional()
-		}
+	urls := ac.GetMandatory()
 
-		if c.List.All {
-			ac.ListAll()
-		}
+	for _, url := range urls {
+		client.DownloadFile(url)
+	}
+}
 
+func ListCommand(list *Choices) {
+	fp, _ := ResolvePath(list.Plist)
+	ac, _ := audiocontent.NewAudioContent(fp)
+
+	if list.Mandatory {
+		ac.ListMandatory()
+	}
+
+	if list.Optional {
+		ac.ListOptional()
+	}
+
+	if list.All {
+		ac.ListAll()
 	}
 }
