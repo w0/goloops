@@ -89,10 +89,14 @@ func (ac *AudioContent) ListAll() {
 	}
 }
 
-func (ac *AudioContent) GetMandatory() {
+func (ac *AudioContent) GetMandatory() []string {
+	var urls []string
+
 	for k, v := range ac.Packages {
 		if v.IsMandatory == true {
-			fmt.Println(ac.GetDownloadUrl(k))
+			urls = append(urls, ac.GetDownloadUrl(k))
 		}
 	}
+
+	return urls
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/alexflint/go-arg"
 	"github.com/w0/goloops/internal/audiocontent"
+	"github.com/w0/goloops/internal/client"
 )
 
 type Choices struct {
@@ -47,6 +48,15 @@ func HandleCommands(c Commands) {
 
 	switch {
 	case c.Get != nil:
+		fp, _ := ResolvePath(c.Get.Plist)
+		ac, _ := audiocontent.NewAudioContent(fp)
+
+		urls := ac.GetMandatory()
+
+		for _, url := range urls {
+			client.DownloadFile(url)
+		}
+
 	case c.List != nil:
 		fp, _ := ResolvePath(c.List.Plist)
 		ac, _ := audiocontent.NewAudioContent(fp)
