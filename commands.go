@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -60,8 +61,15 @@ func GetCommand(get *Choices) {
 
 	urls := ac.GetMandatory()
 
+	limit := make(chan int, 3)
+
 	for _, url := range urls {
-		client.DownloadFile(url)
+		limit <- 1
+		go func() {
+			fmt.Printf("Downloading: %s\n", url)
+			client.DownloadFile(url)
+			<-limit
+		}()
 	}
 }
 
