@@ -35,7 +35,7 @@ func ResolvePath(path string) (string, error) {
 	absPath, err := filepath.Abs(path)
 
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	if _, err := os.Stat(absPath); errors.Is(err, os.ErrNotExist) {

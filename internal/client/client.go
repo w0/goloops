@@ -10,17 +10,17 @@ import (
 	"strings"
 )
 
-type Client struct {
-	httpClient http.Client
-	inProgress int
-	remaining  int
-}
-
 // Create the out file
 func OutFile(path string, filename string) os.File {
 	u, _ := user.Current()
-	filepath := filepath.Join(u.HomeDir, filename)
-	out, err := os.Create(filepath)
+	fp := filepath.Join(u.HomeDir, "Downloads/goloops", filename)
+	dir := filepath.Dir(fp)
+
+	if _, ok := os.Stat(dir); os.IsNotExist(ok) {
+		os.Mkdir(dir, 0755)
+	}
+
+	out, err := os.Create(fp)
 
 	if err != nil {
 		panic(err)
